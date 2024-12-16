@@ -1,0 +1,373 @@
+{% schema %}
+{
+  "name": "★ Scroll Marquee",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "range",
+      "id": "marquee_font_size",
+      "min": 50,
+      "max": 200,
+      "step": 10,
+      "unit": "px",
+      "label": "Marquee Font Size (Desktop)",
+      "default": 180
+    },
+    {
+      "type": "range",
+      "id": "marquee_font_size_tablet",
+      "min": 50,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "label": "Marquee Font Size (Tablet)",
+      "default": 80,
+      "info": "Percentage of desktop font size"
+    },
+    {
+      "type": "range",
+      "id": "marquee_font_size_mobile",
+      "min": 50,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "label": "Marquee Font Size (Mobile)",
+      "default": 60,
+      "info": "Percentage of desktop font size"
+    },
+    {
+      "type": "range",
+      "id": "marquee_spacing",
+      "min": -80,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "label": "Spacing Between Marquees (Desktop)",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "marquee_spacing_tablet",
+      "min": -80,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "label": "Spacing Between Marquees (Tablet)",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "marquee_spacing_mobile",
+      "min": -80,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "label": "Spacing Between Marquees (Mobile)",
+      "default": 0
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:sections.all.colors.label",
+      "default": "scheme-1"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.all.padding.section_padding_heading"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_top",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "t:sections.all.padding.padding_bottom",
+      "default": 52
+    }
+  ],
+  "blocks": [
+    {
+      "type": "marquee_text",
+      "name": "Marquee Text",
+      "settings": [
+        {
+          "type": "text",
+          "id": "text",
+          "label": "Text",
+          "default": "Add your text here"
+        },
+        {
+          "type": "select",
+          "id": "text_alignment",
+          "label": "Text Alignment",
+          "options": [
+            {
+              "value": "left",
+              "label": "Left"
+            },
+            {
+              "value": "right",
+              "label": "Right"
+            }
+          ],
+          "default": "left"
+        },
+        {
+          "type": "range",
+          "id": "scroll_speed",
+          "min": 1,
+          "max": 20,
+          "step": 1,
+          "label": "Scroll Speed",
+          "default": 10,
+          "info": "1 is slowest, 20 is fastest"
+        },
+        {
+          "type": "color",
+          "id": "text_color",
+          "label": "Text Color",
+          "info": "Leave blank to use default color"
+        },
+        {
+          "type": "checkbox",
+          "id": "use_all_caps",
+          "label": "Use All Caps",
+          "default": false
+        },
+        {
+          "type": "checkbox",
+          "id": "override_theme_font",
+          "label": "Override default theme font",
+          "default": false
+        },
+        {
+          "type": "font_picker",
+          "id": "custom_font",
+          "label": "Custom font",
+          "default": "helvetica_n4"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "★ Scroll Marquee",
+      "blocks": [
+        {
+          "type": "marquee_text"
+        },
+        {
+          "type": "marquee_text"
+        },
+        {
+          "type": "marquee_text"
+        },
+        {
+          "type": "marquee_text"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
+
+<div class="color-{{ section.settings.color_scheme }} gradient">
+  <div class="section-{{ section.id }}-padding">
+    <section class="section_marquee" id="section-{{ section.id }}">
+      <div class="marquee_wrapper">
+        {% for block in section.blocks %}
+          {% case block.type %}
+            {% when 'marquee_text' %}
+              <div
+                class="marquee_container marquee_{{ block.settings.text_alignment }} {% if block.settings.override_theme_font %}custom-font-{{ block.id }}{% endif %}"
+                data-scroll-speed="{{ block.settings.scroll_speed }}"
+                {{ block.shopify_attributes }}
+              >
+                <div class="marquee_content">
+                  <h1
+                    class="h1_marquee h1_marquee_{{ block.settings.text_alignment }} {% if block.settings.use_all_caps %}text-uppercase{% endif %}"
+                    {% if block.settings.text_color != blank %}
+                      style="color: {{ block.settings.text_color }};"
+                    {% endif %}
+                  >
+                    {% for i in (1..10) %}
+                      <span>{{ block.settings.text }}&nbsp;</span>
+                    {% endfor %}
+                  </h1>
+                </div>
+              </div>
+          {% endcase %}
+        {% endfor %}
+      </div>
+    </section>
+  </div>
+</div>
+
+<style>
+  #section-{{ section.id }} .section_marquee {
+    overflow: hidden;
+    position: relative;
+  }
+
+  #section-{{ section.id }} .marquee_wrapper {
+    display: flex;
+    flex-direction: column;
+  }
+
+  #section-{{ section.id }} .marquee_container {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    margin-bottom: {{ section.settings.marquee_spacing_mobile }}px;
+  }
+
+  #section-{{ section.id }} .marquee_content {
+    position: relative;
+    width: 300%;
+  }
+
+  #section-{{ section.id }} .h1_marquee {
+    font-size: calc({{ section.settings.marquee_font_size }}px * {{ section.settings.marquee_font_size_mobile | divided_by: 100.0 }});
+    line-height: 1.2;
+    white-space: nowrap;
+    display: inline-block;
+    margin: 0;
+    padding: 0;
+  }
+
+  @media screen and (min-width: 750px) {
+    #section-{{ section.id }} .marquee_container {
+      margin-bottom: {{ section.settings.marquee_spacing_tablet }}px;
+    }
+
+    #section-{{ section.id }} .h1_marquee {
+      font-size: calc({{ section.settings.marquee_font_size }}px * {{ section.settings.marquee_font_size_tablet | divided_by: 100.0 }});
+    }
+  }
+
+  @media screen and (min-width: 990px) {
+    #section-{{ section.id }} .marquee_container {
+      margin-bottom: {{ section.settings.marquee_spacing }}px;
+    }
+
+    #section-{{ section.id }} .h1_marquee {
+      font-size: {{ section.settings.marquee_font_size }}px;
+    }
+  }
+
+  #section-{{ section.id }} .h1_marquee:not([style*="color"]) {
+    color: rgba(var(--color-foreground), .85);
+  }
+
+  #section-{{ section.id }} .h1_marquee span {
+    display: inline-block;
+  }
+
+  #section-{{ section.id }} .h1_marquee_left {
+    text-align: left;
+  }
+
+  #section-{{ section.id }} .h1_marquee_right {
+    text-align: right;
+  }
+
+  #section-{{ section.id }} .text-uppercase {
+    text-transform: uppercase;
+  }
+
+  {% for block in section.blocks %}
+    {% if block.settings.override_theme_font %}
+      {{ block.settings.custom_font | font_face: font_display: 'swap' }}
+      #section-{{ section.id }} .custom-font-{{ block.id }} .h1_marquee {
+        font-family: {{ block.settings.custom_font.family }}, {{ block.settings.custom_font.fallback_families }};
+        font-weight: {{ block.settings.custom_font.weight }};
+        font-style: {{ block.settings.custom_font.style }};
+      }
+    {% endif %}
+  {% endfor %}
+</style>
+
+{%- style -%}
+  .section-{{ section.id }}-padding {
+    padding-top: calc({{ section.settings.padding_top }}px * 0.75);
+    padding-bottom: calc({{ section.settings.padding_bottom }}px  * 0.75);
+  }
+  @media screen and (min-width: 750px) {
+    .section-{{ section.id }}-padding {
+      padding-top: {{ section.settings.padding_top }}px;
+      padding-bottom: {{ section.settings.padding_bottom }}px;
+    }
+  }
+{%- endstyle -%}
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') {
+    console.error('GSAP or ScrollTrigger is not loaded');
+    return;
+  }
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  const sectionId = "section-{{ section.id }}";
+  const marqueeSection = document.getElementById(sectionId);
+
+  if (!marqueeSection) {
+    console.error('Marquee section not found');
+    return;
+  }
+
+  gsap.utils.toArray(`#${sectionId} .marquee_container`).forEach(container => {
+    const content = container.querySelector('.marquee_content');
+    const element = content.querySelector('.h1_marquee');
+    const scrollSpeed = parseFloat(container.dataset.scrollSpeed) || 10;
+    const isLeft = container.classList.contains('marquee_left');
+    
+    let startX, endX;
+    if (isLeft) {
+      startX = '0%';
+      endX = '-66.66%';
+    } else {
+      startX = '-66.66%';
+      endX = '0%';
+    }
+
+    const minScrub = 0.1;
+    const maxScrub = 5;
+    const scrubValue = maxScrub * Math.pow(minScrub / maxScrub, (scrollSpeed - 1) / 19);
+
+    gsap.fromTo(content,
+      { x: startX },
+      {
+        x: endX,
+        ease: "none",
+        scrollTrigger: {
+          trigger: container,
+          start: "top bottom",
+          end: "bottom top",
+          scrub: scrubValue
+        }
+      }
+    );
+  });
+
+  console.log('Marquee section:', marqueeSection);
+  console.log('GSAP version:', gsap.version);
+  console.log('ScrollTrigger version:', ScrollTrigger.version);
+});
+</script>
