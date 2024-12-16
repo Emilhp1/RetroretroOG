@@ -1,0 +1,765 @@
+<style>
+    #shopify-section-{{ section.id }} {
+      --columns-desktop-{{ section.id }}: {{ section.settings.columns_desktop }};
+      --columns-tablet-{{ section.id }}: {{ section.settings.columns_tablet }};
+      --columns-mobile-{{ section.id }}: {{ section.settings.columns_mobile }};
+      --grid-gap-{{ section.id }}: {{ section.settings.gap }}px;
+      --background-color-{{ section.id }}: {{ section.settings.background_color }};
+    }
+  
+    #shopify-section-{{ section.id }} .section-{{ section.id }}-padding {
+      padding-top: calc({{ section.settings.padding_top }}px * 0.75);
+      padding-bottom: calc({{ section.settings.padding_bottom }}px * 0.75);
+      padding-left: calc({{ section.settings.padding_left }}px * 0.75);
+      padding-right: calc({{ section.settings.padding_right }}px * 0.75);
+    }
+  
+    @media screen and (min-width: 750px) {
+      #shopify-section-{{ section.id }} .section-{{ section.id }}-padding {
+        padding-top: {{ section.settings.padding_top }}px;
+        padding-bottom: {{ section.settings.padding_bottom }}px;
+        padding-left: {{ section.settings.padding_left }}px;
+        padding-right: {{ section.settings.padding_right }}px;
+      }
+    }
+  
+    #shopify-section-{{ section.id }} .bento-grid {
+      display: grid;
+      gap: var(--grid-gap-{{ section.id }});
+      grid-template-columns: repeat(var(--columns-mobile-{{ section.id }}), 1fr);
+      background-color: var(--background-color-{{ section.id }});
+      padding: var(--grid-gap-{{ section.id }});
+      grid-auto-rows: 1fr;
+    }
+  
+    @media screen and (min-width: 768px) {
+      #shopify-section-{{ section.id }} .bento-grid {
+        grid-template-columns: repeat(var(--columns-tablet-{{ section.id }}), 1fr);
+      }
+    }
+  
+    @media screen and (min-width: 990px) {
+      #shopify-section-{{ section.id }} .bento-grid {
+        grid-template-columns: repeat(var(--columns-desktop-{{ section.id }}), 1fr);
+      }
+    }
+  
+    #shopify-section-{{ section.id }} .bento-grid__item {
+      position: relative;
+      overflow: hidden;
+      border-radius: {{ section.settings.custom_border_radius }}px;
+      min-height: 100px;
+    }
+  
+    #shopify-section-{{ section.id }} .bento-grid__item::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 1;
+      pointer-events: none;
+    }
+  
+    {% if section.settings.use_custom_height %}
+      #shopify-section-{{ section.id }} .bento-grid__item {
+        height: {{ section.settings.custom_height }}px;
+      }
+    {% endif %}
+  
+    #shopify-section-{{ section.id }} .bento-grid__item-content {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      padding: 20px 30px;
+      z-index: 2;
+    }
+  
+    #shopify-section-{{ section.id }} .bento-grid__item-content--with-background {
+      background-color: var(--text-background-color-{{ section.id }});
+      padding: 20px 30px;
+      border-radius: 4px;
+    }
+  
+    #shopify-section-{{ section.id }} .bento-grid__item-content h1,
+    #shopify-section-{{ section.id }} .bento-grid__item-content h2,
+    #shopify-section-{{ section.id }} .bento-grid__item-content h3,
+    #shopify-section-{{ section.id }} .bento-grid__item-content h4,
+    #shopify-section-{{ section.id }} .bento-grid__item-content h5,
+    #shopify-section-{{ section.id }} .bento-grid__item-content h6,
+    #shopify-section-{{ section.id }} .bento-grid__item-content p {
+      margin-bottom: .5rem !important;
+      margin-top: .5rem !important;
+    }
+  
+    #shopify-section-{{ section.id }} .bento-grid__item-content h1,
+    #shopify-section-{{ section.id }} .bento-grid__item-content h5 {
+      margin-bottom: 0rem !important;
+      margin-top: 0rem !important;
+    }
+  
+    #shopify-section-{{ section.id }} .bento-grid__item-button {
+      margin: 1rem 0 0 !important;
+    }
+  
+    #shopify-section-{{ section.id }} .bento-grid__item-link {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 4;
+      cursor: pointer;
+    }
+  
+    #shopify-section-{{ section.id }} .bento-grid__item {
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+  
+    {% if section.settings.animate_grid %}
+    #shopify-section-{{ section.id }} .bento-grid__item:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    {% endif %}
+  
+    #shopify-section-{{ section.id }} .bento-grid__item-caption {
+      font-size: 0.875em;
+      opacity: 0.85;
+      margin-bottom: 0.5rem;
+    }
+  
+    #shopify-section-{{ section.id }} .bento-grid__item-media {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: 0;
+    }
+  
+    #shopify-section-{{ section.id }} .bento-grid__item-video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  
+    @media screen and (max-width: 767px) {
+      #shopify-section-{{ section.id }} .bento-grid__item--no-image {
+        height: fit-content !important;
+        min-height: 0;
+      }
+  
+      #shopify-section-{{ section.id }} .bento-grid__item--no-image .bento-grid__item-content {
+        position: relative;
+        height: auto;
+      }
+  
+      #shopify-section-{{ section.id }} .bento-grid {
+        grid-auto-rows: max-content;
+      }
+    }
+  
+    @media screen and (min-width: 768px) {
+      #shopify-section-{{ section.id }} .bento-grid__item {
+        grid-column: var(--column-span-tablet-{{ section.id }}, span 1);
+        grid-row: var(--row-span-tablet-{{ section.id }}, span 1);
+      }
+    }
+  
+    @media screen and (min-width: 990px) {
+      #shopify-section-{{ section.id }} .bento-grid__item {
+        grid-column: var(--column-span-desktop-{{ section.id }}, span 1);
+        grid-row: var(--row-span-desktop-{{ section.id }}, span 1);
+      }
+    }
+  
+    {% for block in section.blocks %}
+      #shopify-section-{{ section.id }} .bento-grid__item--{{ block.id }} .bento-grid__item-content {
+        justify-content: {% case block.settings.content_alignment %}
+          {% when 'top_left' or 'top_center' or 'top_right' %}flex-start
+          {% when 'middle_left' or 'middle_center' or 'middle_right' %}center
+          {% when 'bottom_left' or 'bottom_center' or 'bottom_right' %}flex-end
+        {% endcase %};
+        align-items: {% case block.settings.content_alignment %}
+          {% when 'top_left' or 'middle_left' or 'bottom_left' %}flex-start
+          {% when 'top_center' or 'middle_center' or 'bottom_center' %}center
+          {% when 'top_right' or 'middle_right' or 'bottom_right' %}flex-end
+        {% endcase %};
+        text-align: {% case block.settings.content_alignment %}
+          {% when 'top_left' or 'middle_left' or 'bottom_left' %}left
+          {% when 'top_center' or 'middle_center' or 'bottom_center' %}center
+          {% when 'top_right' or 'middle_right' or 'bottom_right' %}right
+        {% endcase %};
+      }
+  
+      #shopify-section-{{ section.id }} .bento-grid__item--{{ block.id }}::after {
+        opacity: {{ block.settings.overlay_opacity | divided_by: 100.0 }};
+        background-color: {{ block.settings.custom_overlay_color }} !important;
+      }
+  
+      {% if block.settings.use_text_background %}
+        #shopify-section-{{ section.id }} .bento-grid__item--{{ block.id }} .bento-grid__item-content h1,
+        #shopify-section-{{ section.id }} .bento-grid__item--{{ block.id }} .bento-grid__item-content h2,
+        #shopify-section-{{ section.id }} .bento-grid__item--{{ block.id }} .bento-grid__item-content h3,
+        #shopify-section-{{ section.id }} .bento-grid__item--{{ block.id }} .bento-grid__item-content h4,
+        #shopify-section-{{ section.id }} .bento-grid__item--{{ block.id }} .bento-grid__item-content h5,
+        #shopify-section-{{ section.id }} .bento-grid__item--{{ block.id }} .bento-grid__item-content h6,
+        #shopify-section-{{ section.id }} .bento-grid__item--{{ block.id }} .bento-grid__item-content p {
+          background-color: {{ block.settings.text_background_color }} !important;
+          padding: 5px;
+          border-radius: 3px;
+        }
+      {% endif %}
+  
+      {% if block.settings.override_theme_font %}
+        {{ block.settings.custom_font | font_face: font_display: 'swap' }}
+        #shopify-section-{{ section.id }} .bento-grid__item--{{ block.id }} .bento-grid__item-content,
+        #shopify-section-{{ section.id }} .bento-grid__item--{{ block.id }} .bento-grid__item-content h1,
+        #shopify-section-{{ section.id }} .bento-grid__item--{{ block.id }} .bento-grid__item-content h2,
+        #shopify-section-{{ section.id }} .bento-grid__item--{{ block.id }} .bento-grid__item-content h3,
+        #shopify-section-{{ section.id }} .bento-grid__item--{{ block.id }} .bento-grid__item-content h4,
+        #shopify-section-{{ section.id }} .bento-grid__item--{{ block.id }} .bento-grid__item-content h5,
+        #shopify-section-{{ section.id }} .bento-grid__item--{{ block.id }} .bento-grid__item-content h6,
+        #shopify-section-{{ section.id }} .bento-grid__item--{{ block.id }} .bento-grid__item-content p,
+        #shopify-section-{{ section.id }} .bento-grid__item--{{ block.id }} .bento-grid__item-content a {
+          font-family: {{ block.settings.custom_font.family }}, {{ block.settings.custom_font.fallback_families }};
+        }
+      {% endif %}
+  
+      #shopify-section-{{ section.id }} .bento-grid__item--{{ block.id }} {
+        --column-span-desktop-{{ section.id }}-{{ block.id }}: span {{ block.settings.column_span_desktop }};
+        --row-span-desktop-{{ section.id }}-{{ block.id }}: span {{ block.settings.row_span_desktop }};
+        --column-span-tablet-{{ section.id }}-{{ block.id }}: span {{ block.settings.column_span_tablet }};
+        --row-span-tablet-{{ section.id }}-{{ block.id }}: span {{ block.settings.row_span_tablet }};
+      }
+  
+      #shopify-section-{{ section.id }} .bento-grid__item--{{ block.id }} {
+        grid-column: var(--column-span-desktop-{{ section.id }}-{{ block.id }});
+        grid-row: var(--row-span-desktop-{{ section.id }}-{{ block.id }});
+      }
+  
+      @media screen and (max-width: 989px) {
+        #shopify-section-{{ section.id }} .bento-grid__item--{{ block.id }} {
+          grid-column: var(--column-span-tablet-{{ section.id }}-{{ block.id }});
+          grid-row: var(--row-span-tablet-{{ section.id }}-{{ block.id }});
+        }
+      }
+  
+      {% if block.settings.adaptive_height_desktop and block.settings.image == blank %}
+        @media screen and (min-width: 768px) {
+          #shopify-section-{{ section.id }} .bento-grid__item--{{ block.id }} {
+            height: fit-content !important;
+            min-height: 0;
+          }
+  
+          #shopify-section-{{ section.id }} .bento-grid__item--{{ block.id }} .bento-grid__item-content {
+            position: relative;
+            height: auto;
+          }
+        }
+      {% endif %}
+  
+      {% if block.settings.use_border %}
+        #shopify-section-{{ section.id }} .bento-grid__item--{{ block.id }} {
+          border: {{ block.settings.border_width }}px solid {{ block.settings.border_color }};
+        }
+      {% endif %}
+    {% endfor %}
+  
+    #shopify-section-{{ section.id }} .bento-grid__item--clickable {
+      cursor: pointer;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+  </style>
+  
+  <div class="color-{{ section.settings.color_scheme }} gradient">
+    <div class="section-{{ section.id }}-padding">
+      <div class="bento-grid">
+        {% for block in section.blocks %}
+          {% case block.type %}
+            {% when 'grid_item' %}
+              <div
+                class="bento-grid__item bento-grid__item--{{ block.id }} color-{{ block.settings.color_scheme }} {% if block.settings.media_type == 'none' %}bento-grid__item--no-media{% endif %} {% if block.settings.make_whole_block_clickable %}bento-grid__item--clickable{% endif %}"
+                {{ block.shopify_attributes }}
+                {% if block.settings.make_whole_block_clickable and block.settings.link != blank %}
+                  onclick="window.location.href='{{ block.settings.link }}'"
+                {% endif %}
+              >
+                {% if block.settings.link != blank and block.settings.make_whole_block_clickable == false %}
+                  <a
+                    href="{{ block.settings.link }}"
+                    class="bento-grid__item-link"
+                    aria-label="{{ block.settings.title | escape }}"
+                  ></a>
+                {% endif %}
+                {% case block.settings.media_type %}
+                  {% when 'image' %}
+                    {% if block.settings.image %}
+                      {{
+                        block.settings.image
+                        | image_url: width: 1000
+                        | image_tag: loading: 'lazy', sizes: '100vw', class: 'bento-grid__item-media'
+                      }}
+                    {% endif %}
+                  {% when 'video' %}
+                    {% if block.settings.video %}
+                      {{
+                        block.settings.video
+                        | video_tag:
+                          loop: true,
+                          muted: true,
+                          playsinline: true,
+                          autoplay: true,
+                          class: 'bento-grid__item-media bento-grid__item-video'
+                      }}
+                    {% endif %}
+                {% endcase %}
+                <div class="bento-grid__item-content {% if block.settings.use_text_background %}bento-grid__item-content--with-background{% endif %}">
+                  {% if block.settings.caption != blank %}
+                    <div class="bento-grid__item-caption">
+                      <h5>{{ block.settings.caption }}</h5>
+                    </div>
+                  {% endif %}
+                  {% if block.settings.title %}
+                    {% case block.settings.heading_tag %}
+                      {% when 'h1' %}
+                        <h1>{{ block.settings.title }}</h1>
+                      {% when 'h2' %}
+                        <h2>{{ block.settings.title }}</h2>
+                      {% else %}
+                        <h3>{{ block.settings.title }}</h3>
+                    {% endcase %}
+                  {% endif %}
+                  {% if block.settings.content %}
+                    {{ block.settings.content }}
+                  {% endif %}
+                  {% if block.settings.button_label != blank and block.settings.link != blank %}
+                    <div class="bento-grid__item-button">
+                      <a
+                        href="{{ block.settings.link }}"
+                        class="{{ block.settings.button_style }}{% if block.settings.button_style == 'link' %} animate-arrow{% endif %}"
+                      >
+                        {{ block.settings.button_label }}
+                      </a>
+                    </div>
+                  {% endif %}
+                </div>
+              </div>
+          {% endcase %}
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+  
+  {% schema %}
+  {
+    "name": "★ Bento Grid",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Grid Layout"
+      },
+      {
+        "type": "range",
+        "id": "columns_desktop",
+        "min": 1,
+        "max": 12,
+        "step": 1,
+        "default": 4,
+        "label": "Columns on desktop",
+        "info": "Sets the number of columns in the grid on large screens"
+      },
+      {
+        "type": "range",
+        "id": "columns_tablet",
+        "min": 1,
+        "max": 8,
+        "step": 1,
+        "default": 3,
+        "label": "Columns on tablet",
+        "info": "Sets the number of columns in the grid on medium-sized screens"
+      },
+      {
+        "type": "range",
+        "id": "columns_mobile",
+        "min": 1,
+        "max": 4,
+        "step": 1,
+        "default": 1,
+        "label": "Columns on mobile",
+        "info": "Sets the number of columns in the grid on small screens"
+      },
+      {
+        "type": "range",
+        "id": "gap",
+        "min": 0,
+        "max": 40,
+        "step": 1,
+        "unit": "px",
+        "label": "Gap between items",
+        "default": 16,
+        "info": "Adjusts the space between grid items"
+      },
+      {
+        "type": "range",
+        "id": "custom_border_radius",
+        "min": 0,
+        "max": 20,
+        "step": 1,
+        "unit": "px",
+        "label": "Border radius",
+        "default": 8,
+        "info": "Adjusts the border radius on grid items"
+      },
+      {
+        "type": "header",
+        "content": "Appearance"
+      },
+      {
+        "type": "color_scheme",
+        "id": "color_scheme",
+        "label": "Color scheme",
+        "default": "scheme-1",
+        "info": "Choose a predefined color palette for this item"
+      },
+      {
+        "type": "checkbox",
+        "id": "use_custom_height",
+        "label": "Use custom height",
+        "default": false,
+        "info": "When checked, all items will use a fixed height"
+      },
+      {
+        "type": "range",
+        "id": "custom_height",
+        "min": 100,
+        "max": 800,
+        "step": 10,
+        "unit": "px",
+        "label": "Custom height for all items",
+        "default": 250,
+        "info": "Used when 'Use custom height' is checked"
+      },
+      {
+        "type": "checkbox",
+        "id": "animate_grid",
+        "label": "Animate on hover",
+        "default": false,
+        "info": "Add a subtle animation when hovering over items"
+      },
+      {
+        "type": "header",
+        "content": "Padding"
+      },
+      {
+        "type": "range",
+        "id": "padding_top",
+        "min": 0,
+        "max": 100,
+        "step": 4,
+        "unit": "px",
+        "label": "Top padding",
+        "default": 40,
+        "info": "Adjusts the space above the Bento Grid section"
+      },
+      {
+        "type": "range",
+        "id": "padding_bottom",
+        "min": 0,
+        "max": 100,
+        "step": 4,
+        "unit": "px",
+        "label": "Bottom padding",
+        "default": 52,
+        "info": "Adjusts the space below the Bento Grid section"
+      },
+      {
+        "type": "range",
+        "id": "padding_left",
+        "min": 0,
+        "max": 100,
+        "step": 4,
+        "unit": "px",
+        "label": "Left padding",
+        "default": 40,
+        "info": "Adjusts the space above the Bento Grid section"
+      },
+      {
+        "type": "range",
+        "id": "padding_right",
+        "min": 0,
+        "max": 100,
+        "step": 4,
+        "unit": "px",
+        "label": "Right padding",
+        "default": 52,
+        "info": "Adjusts the space below the Bento Grid section"
+      }
+    ],
+    "blocks": [
+      {
+        "type": "grid_item",
+        "name": "Grid Item",
+        "settings": [
+          {
+            "type": "header",
+            "content": "Content"
+          },
+          {
+            "type": "select",
+            "id": "media_type",
+            "label": "Media type",
+            "options": [
+              { "value": "none", "label": "None" },
+              { "value": "image", "label": "Image" },
+              { "value": "video", "label": "Video" }
+            ],
+            "default": "none"
+          },
+          {
+            "type": "image_picker",
+            "id": "image",
+            "label": "Image",
+            "info": "Select an image if 'Image' is chosen as media type"
+          },
+          {
+            "type": "video",
+            "id": "video",
+            "label": "Video",
+            "info": "Select a video if 'Video' is chosen as media type"
+          },
+          {
+            "type": "color",
+            "id": "custom_overlay_color",
+            "label": "Overlay color",
+            "default": "#242833"
+          },
+          {
+            "type": "range",
+            "id": "overlay_opacity",
+            "min": 0,
+            "max": 100,
+            "step": 5,
+            "unit": "%",
+            "label": "Overlay opacity",
+            "default": 0,
+            "info": "Adds a color overlay to the grid item"
+          },
+          {
+            "type": "text",
+            "id": "caption",
+            "label": "Caption",
+            "info": "Appears above the title"
+          },
+          {
+            "type": "text",
+            "id": "title",
+            "label": "Title"
+          },
+          {
+            "type": "select",
+            "id": "heading_tag",
+            "options": [
+              { "value": "h1", "label": "H1" },
+              { "value": "h2", "label": "H2" },
+              { "value": "h3", "label": "H3" }
+            ],
+            "default": "h3",
+            "label": "Heading level",
+            "info": "Choose the HTML tag for the title"
+          },
+          {
+            "type": "richtext",
+            "id": "content",
+            "label": "Content"
+          },
+          {
+            "type": "header",
+            "content": "Link and Button"
+          },
+          {
+            "type": "url",
+            "id": "link",
+            "label": "Link URL"
+          },
+          {
+            "type": "checkbox",
+            "id": "make_whole_block_clickable",
+            "label": "Make whole block clickable",
+            "default": false,
+            "info": "When checked, the entire block becomes clickable instead of just the button"
+          },
+          {
+            "type": "text",
+            "id": "button_label",
+            "label": "Button text"
+          },
+          {
+            "type": "select",
+            "id": "button_style",
+            "label": "Button style",
+            "options": [
+              { "value": "button button--primary", "label": "Primary" },
+              { "value": "button button--secondary", "label": "Secondary" },
+              { "value": "link animate-arrow", "label": "Link with arrow" }
+            ],
+            "default": "button button--primary"
+          },
+          {
+            "type": "header",
+            "content": "Typography"
+          },
+          {
+            "type": "checkbox",
+            "id": "override_theme_font",
+            "label": "Override default theme font",
+            "default": false
+          },
+          {
+            "type": "font_picker",
+            "id": "custom_font",
+            "label": "Custom font",
+            "default": "helvetica_n4"
+          },
+          {
+            "type": "header",
+            "content": "Appearance"
+          },
+          {
+            "type": "checkbox",
+            "id": "use_text_background",
+            "label": "Use text background color",
+            "default": false,
+            "info": "Add a background color behind the text for better readability"
+          },
+          {
+            "type": "color",
+            "id": "text_background_color",
+            "label": "Text background color",
+            "default": "#cccccc"
+          },
+          {
+            "type": "header",
+            "content": "Border"
+          },
+          {
+            "type": "checkbox",
+            "id": "use_border",
+            "label": "Add border",
+            "default": false
+          },
+          {
+            "type": "range",
+            "id": "border_width",
+            "min": 1,
+            "max": 10,
+            "step": 1,
+            "unit": "px",
+            "label": "Border width",
+            "default": 1
+          },
+          {
+            "type": "color",
+            "id": "border_color",
+            "label": "Border color",
+            "default": "#000000"
+          },
+          {
+            "type": "select",
+            "id": "content_alignment",
+            "label": "Content alignment",
+            "options": [
+              { "value": "top_left", "label": "Top left" },
+              { "value": "top_center", "label": "Top center" },
+              { "value": "top_right", "label": "Top right" },
+              { "value": "middle_left", "label": "Middle left" },
+              { "value": "middle_center", "label": "Middle center" },
+              { "value": "middle_right", "label": "Middle right" },
+              { "value": "bottom_left", "label": "Bottom left" },
+              { "value": "bottom_center", "label": "Bottom center" },
+              { "value": "bottom_right", "label": "Bottom right" }
+            ],
+            "default": "middle_center",
+            "info": "Determines how the content is positioned within the item"
+          },
+          {
+            "type": "color_scheme",
+            "id": "color_scheme",
+            "label": "Color scheme",
+            "default": "scheme-1",
+            "info": "Choose a predefined color palette for this item"
+          },
+          {
+            "type": "header",
+            "content": "Responsive Layout"
+          },
+          {
+            "type": "range",
+            "id": "column_span_desktop",
+            "min": 1,
+            "max": 12,
+            "step": 1,
+            "default": 1,
+            "label": "Column width on desktop",
+            "info": "Number of columns this item should span on large screens"
+          },
+          {
+            "type": "range",
+            "id": "row_span_desktop",
+            "min": 1,
+            "max": 12,
+            "step": 1,
+            "default": 1,
+            "label": "Row height on desktop",
+            "info": "Number of rows this item should span on large screens"
+          },
+          {
+            "type": "range",
+            "id": "column_span_tablet",
+            "min": 1,
+            "max": 8,
+            "step": 1,
+            "default": 1,
+            "label": "Column width on tablet",
+            "info": "Number of columns this item should span on medium-sized screens"
+          },
+          {
+            "type": "range",
+            "id": "row_span_tablet",
+            "min": 1,
+            "max": 8,
+            "step": 1,
+            "default": 1,
+            "label": "Row height on tablet",
+            "info": "Number of rows this item should span on medium-sized screens"
+          },
+          {
+            "type": "checkbox",
+            "id": "adaptive_height_desktop",
+            "label": "Use adaptive height on desktop",
+            "default": false,
+            "info": "When checked, this item will adjust its height to content on large screens if no image is set"
+          }
+        ]
+      }
+    ],
+    "presets": [
+      {
+        "name": "★ Bento Grid",
+        "blocks": [
+          { "type": "grid_item" },
+          { "type": "grid_item" },
+          { "type": "grid_item" },
+          { "type": "grid_item" }
+        ]
+      }
+    ]
+  }
+  {% endschema %}
