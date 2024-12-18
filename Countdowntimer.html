@@ -1,3 +1,4 @@
+
 <div class="countdown-section section-{{ section.id }}-padding">
   {%- style -%}
     .section-{{ section.id }}-padding {
@@ -52,70 +53,116 @@
 </div>
 
 <script type="text/javascript">
-  // Countdown timer klasse til at håndtere nedtællingen
   class CountdownTimer {
     constructor(element) {
-      // Initialiser timeren med DOM elementer og måldata
+      // Initialiser timer elementer
       this.element = element;
-      this.targetDate = new Date(element.dataset.targetDate).getTime();
+      
+      // Safari-venlig dato parsing
+      const targetDateStr = element.dataset.targetDate;
+      // Konverterer dato string til Safari-venligt format ved at erstatte - med / 
+      const safariCompatibleDate = targetDateStr.replace(/-/g, '/');
+      this.targetDate = new Date(safariCompatibleDate).getTime();
+      
+      // DOM elementer
       this.daysElement = element.querySelector('[data-days]');
       this.hoursElement = element.querySelector('[data-hours]');
       this.minutesElement = element.querySelector('[data-minutes]');
       this.secondsElement = element.querySelector('[data-seconds]');
       
-      // Start nedtællingen hvis måldatoen er i fremtiden
-      if (this.targetDate > new Date().getTime()) {
+      // Debug logging for at hjælpe med fejlfinding
+      console.log('Target date string:', targetDateStr);
+      console.log('Safari compatible date:', safariCompatibleDate);
+      console.log('Parsed date:', new Date(safariCompatibleDate));
+      console.log('Target timestamp:', this.targetDate);
+      
+      // Start timer hvis datoen er gyldig og i fremtiden
+      if (this.isValidDate() && this.targetDate > new Date().getTime()) {
         this.start();
+      } else {
+        console.error('Invalid date or date is in the past');
+        // Vis 0'er hvis datoen er ugyldig eller overskredet
+        this.showZeros();
       }
     }
 
-    // Start nedtællingen
+    // Tjek om datoen er gyldig
+    isValidDate() {
+      return !isNaN(this.targetDate);
+    }
+
+    // Vis nuller hvis noget går galt
+    showZeros() {
+      this.daysElement.textContent = '00';
+      this.hoursElement.textContent = '00';
+      this.minutesElement.textContent = '00';
+      this.secondsElement.textContent = '00';
+    }
+
     start() {
       this.updateTimer();
       this.interval = setInterval(() => this.updateTimer(), 1000);
     }
 
-    // Opdater timer displays
     updateTimer() {
-      const now = new Date().getTime();
-      const distance = this.targetDate - now;
+      try {
+        const now = new Date().getTime();
+        const distance = this.targetDate - now;
 
-      // Beregn dage, timer, minutter og sekunder
-      const days = Math.floor(distance / (1000 * 60 * 60 * 24));
-      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+        if (distance < 0) {
+          clearInterval(this.interval);
+          this.showZeros();
+          return;
+        }
 
-      // Opdater DOM elementer
-      this.daysElement.textContent = this.padNumber(days);
-      this.hoursElement.textContent = this.padNumber(hours);
-      this.minutesElement.textContent = this.padNumber(minutes);
-      this.secondsElement.textContent = this.padNumber(seconds);
+        // Beregn tidsværdier
+        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
-      // Stop timeren når tiden er udløbet
-      if (distance < 0) {
-        clearInterval(this.interval);
-        this.element.style.display = 'none';
+        // Opdater DOM
+        this.daysElement.textContent = this.padNumber(days);
+        this.hoursElement.textContent = this.padNumber(hours);
+        this.minutesElement.textContent = this.padNumber(minutes);
+        this.secondsElement.textContent = this.padNumber(seconds);
+      } catch (error) {
+        console.error('Error updating timer:', error);
+        this.showZeros();
       }
     }
 
-    // Hjælpefunktion til at formatere tal med førende nuller
     padNumber(number) {
       return number < 10 ? `0${number}` : number;
     }
+
+    // Cleanup metode
+    destroy() {
+      if (this.interval) {
+        clearInterval(this.interval);
+      }
+    }
   }
 
-  // Initialiser alle countdown timere på siden
+  // Initialiser timere når DOM'en er loaded
   document.addEventListener('DOMContentLoaded', () => {
+    const timers = new Set();
+    
     document.querySelectorAll('.countdown-timer-wrapper').forEach(wrapper => {
-      new CountdownTimer(wrapper);
+      const timer = new CountdownTimer(wrapper);
+      timers.add(timer);
+    });
+
+    // Cleanup når siden forlades eller genindlæses
+    window.addEventListener('unload', () => {
+      timers.forEach(timer => timer.destroy());
     });
   });
 </script>
 
 {% schema %}
 {
-  "name": "Countdown Timer2",
+  "name": "Countdown Timer3",
   "tag": "section",
   "class": "section",
   "settings": [
@@ -183,7 +230,7 @@
   ],
   "presets": [
     {
-      "name": "Countdown Timer2",
+      "name": "Countdown Timer3",
       "category": "Promotional"
     }
   ]
